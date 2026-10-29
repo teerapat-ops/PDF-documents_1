@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#142238">
+  <title>Document Desk — PDF Workspace</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="vendor/pdf.min.js" defer></script>
+  <script src="vendor/pdf-lib.min.js" defer></script>
+  <script src="vendor/tesseract.min.js" defer></script>
+  <script src="vendor/jszip.min.js" defer></script>
+  <script src="app.js?v=20261028-workspace-reset" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Document Desk home">
+      <span class="brand-mark">P</span>
+      <span>Document Desk<span class="brand-dot">.</span></span>
+    </a>
+
+    <div class="header-actions">
+      <button class="header-toggle" type="button" data-theme-btn="light" aria-label="เปลี่ยนเป็นโหมดมืด" title="เปลี่ยนโหมดสี">
+        <span class="toggle-icon theme-icon" aria-hidden="true">
+          <svg class="theme-icon-light" viewBox="0 0 24 24"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.36-6.36-1.42 1.42M7.06 16.94l-1.42 1.42m12.72 0-1.42-1.42M7.06 7.06 5.64 5.64M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg class="theme-icon-dark" viewBox="0 0 24 24"><path d="M20.2 15.1A8.7 8.7 0 0 1 8.9 3.8 8.8 8.8 0 1 0 20.2 15.1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="toggle-label">สว่าง</span>
+      </button>
+      <button class="header-toggle language-toggle" type="button" data-lang-btn="th" aria-label="เปลี่ยนภาษาเป็นอังกฤษ" title="เปลี่ยนภาษา">
+        <span class="toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 12h17M12 3c2.2 2.4 3.3 5.4 3.3 9s-1.1 6.6-3.3 9c-2.2-2.4-3.3-5.4-3.3-9S9.8 5.4 12 3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        <span class="toggle-label">ไทย</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <aside class="sidebar">
+        <div class="sidebar-label">WORKSPACE</div>
+      <a class="nav-link active" href="#upload" data-step="upload"><span>01</span><span class="nav-link-copy"><span data-i18n="navUploadShort">อัปโหลดและตรวจสอบ</span><small class="nav-link-status" data-nav-status="upload"></small></span></a>
+      <a class="nav-link" href="#results" data-step="results"><span>02</span><span class="nav-link-copy"><span data-i18n="navReviewShort">เอกสารที่ตรวจพบ</span><small class="nav-link-status" data-nav-status="results"></small></span></a>
+      <a class="nav-link" href="#export" data-step="export"><span>03</span><span class="nav-link-copy"><span data-i18n="navExportShort">ส่งออกไฟล์</span><small class="nav-link-status" data-nav-status="export"></small></span></a>
+      <div class="sidebar-note">
+        <strong data-i18n="sidebarInfoTitle">ข้อมูลของคุณ</strong>
+        <p data-i18n="sidebarInfoBody">ไฟล์ PDF อยู่ในเครื่องและไม่ถูกส่งไปยังเซิร์ฟเวอร์ ระบบ PDF และ OCR ทำงานจากไฟล์ภายในเครื่อง ไม่ต้องโหลดจาก CDN</p>
+      </div>
+      <div class="sidebar-footer">DOCUMENT DESK · LOCAL WORKSPACE</div>
+    </aside>
+
+    <div class="content">
+      <section class="intro">
+        <div class="eyebrow" data-i18n="workspaceLabel">DOCUMENT WORKSPACE</div>
+        <h1 data-i18n="heroTitle">จัดระเบียบเอกสาร PDF<br><span>อย่างมั่นใจ</span></h1>
+        <p data-i18n="heroSubtitle">ข้อความ ตรวจหาจุดแบ่ง และตรวจภาพจากเอกสารต้นฉบับก่อนส่งออก</p>
+      </section>
+
+      <section class="panel upload-panel" id="upload">
+        <div class="section-heading">
+          <div><span class="step">01</span><div><h2 data-i18n="uploadTitle">เพิ่มไฟล์ PDF</h2><p data-i18n="uploadText">เพิ่มได้หลายไฟล์โดยไม่มีเพดานจำนวน · จำกัดไม่เกิน 100 MiB ต่อไฟล์ตามทรัพยากรเบราว์เซอร์</p></div></div>
+          <span class="status-chip" id="fileStatus">รอไฟล์</span>
+        </div>
+        <label id="dropZone" class="drop-zone" for="pdfFile">
+          <span class="upload-icon" aria-hidden="true">↑</span>
+          <strong data-i18n="dropZoneTitle">ลากไฟล์ PDF หลายไฟล์มาวางที่นี่</strong>
+          <span data-i18n="dropZoneHint">หรือ <u>เลือกหลายไฟล์จากอุปกรณ์</u></span>
+          <small data-i18n="dropZoneMeta">ไม่มีการจำกัดจำนวนไฟล์โดยแอป · PDF ไม่เกิน 100 MiB ต่อไฟล์</small>
+        </label>
+        <input id="pdfFile" type="file" accept=".pdf,application/pdf" multiple>
+        <div id="queuePanel" class="queue-panel hidden">
+          <div class="queue-heading">
+            <div class="queue-heading-copy"><strong data-i18n="queueTitle">ไฟล์ในงานนี้</strong><span id="queueSummary" data-i18n="queueEmpty">ยังไม่มีไฟล์</span></div>
+            <button class="queue-clear" id="removeAllFiles" type="button" data-i18n="removeAllFiles" disabled>ลบทั้งหมด</button>
+          </div>
+          <div id="fileQueue" class="file-queue"></div>
+          <div id="uploadErrors" class="upload-errors hidden" role="status"></div>
+        </div>
+        <div class="file-summary hidden" id="fileSummary"></div>
+        <div class="toolbar upload-toolbar">
+          <label class="setting-label" for="ocrLanguage" data-i18n="ocrLanguageLabel">ภาษา OCR</label>
+          <select id="ocrLanguage" disabled>
+            <option value="tha+eng">ไทย + English (อ่านและแสดงทั้งสองภาษา)</option>
+            <option value="tha">ไทย — แปลผลภาษาอังกฤษเป็นไทย</option>
+            <option value="eng">English — แปลผลภาษาไทยเป็น English</option>
+          </select>
+          <button class="button button-primary" id="analyze" data-i18n="analyze" disabled>วิเคราะห์ไฟล์ที่รอ</button>
+        </div>
+        <div class="progress-track hidden" id="progressTrack"><div id="progressBar"></div></div>
+        <div id="processStatus" class="status-message" role="status" aria-live="polite">เลือก PDF เพื่อเริ่มต้น</div>
+      </section>
+
+      <section class="panel viewer-panel hidden" id="viewerPanel">
+        <div class="section-heading">
+          <div><span class="step">VIEW</span><div><h2 data-i18n="viewerTitle">ตรวจหน้าเอกสารจริง</h2><p id="viewerSubtext" data-i18n="viewerSubtext">ภาพแสดงจาก PDF ต้นฉบับ</p></div></div>
+          <span class="source-badge" data-i18n="sourceBadge">SOURCE PDF</span>
+        </div>
+        <div class="viewer-toolbar">
+          <button class="button button-quiet" id="previousPage" aria-label="หน้าก่อนหน้า" data-i18n="viewerPrevious">←</button>
+          <span id="pageCounter">หน้า — / —</span>
+          <button class="button button-quiet" id="nextPage" aria-label="หน้าถัดไป" data-i18n="viewerNext">→</button>
+          <label class="page-select-toggle"><input type="checkbox" id="includeCurrentPage" checked> <span data-i18n="includeCurrentPage">ใช้หน้าปัจจุบันในการส่งออก</span></label>
+          <button class="button button-quiet" id="selectAllPages" type="button" data-i18n="selectAllPages">เลือกทุกหน้า</button>
+          <button class="button button-quiet" id="clearAllPages" type="button" data-i18n="clearAllPages">ไม่เลือกทุกหน้า</button>
+          <span class="toolbar-spacer"></span>
+          <button class="button button-quiet" id="zoomOut" aria-label="ซูมออก" data-i18n="viewerZoomOut">−</button>
+          <button class="button button-quiet" id="zoomIn" aria-label="ซูมเข้า" data-i18n="viewerZoomIn">+</button>
+          <button class="button button-quiet" id="rotatePage" data-i18n="viewerRotate">หมุน ↻</button>
+        </div>
+        <div class="page-selection-panel" id="pageSelectionPanel">
+          <div class="page-selection-heading">
+            <div><strong data-i18n="pagesToExport">หน้าที่ใช้ส่งออก</strong><span id="selectedPageSummary" data-i18n="selectPagesHint">เลือกดูหน้าที่ต้องการ</span></div>
+            <div class="page-selection-actions">
+                <button class="button button-quiet" id="selectAllPagesTop" type="button" data-i18n="selectAllPages">เลือกทุกหน้า</button>
+                <button class="button button-quiet" id="clearAllPagesTop" type="button" data-i18n="clearSelectedPages">ล้างหน้าที่เลือกทั้งหมด</button>
+            </div>
+          </div>
+          <div class="selected-page-strip" id="selectedPageStrip"></div>
+          <div class="excluded-page-bar hidden" id="excludedPageBar">
+            <span data-i18n="excludedPages">หน้าที่ถูกลบออก:</span>
+            <div id="excludedPageList"></div>
+            <button class="button button-quiet" id="restoreAllPages" type="button" data-i18n="restoreAllPages">คืนทุกหน้า</button>
+          </div>
+        </div>
+        <div class="pdf-stage" id="pdfStage"><div class="empty-stage">ภาพ PDF จะปรากฏที่นี่</div></div>
+        <div class="page-actions">
+          <button class="button button-quiet" id="splitAtCurrent" data-i18n="splitCurrent" disabled>แบ่งเอกสารก่อนหน้านี้</button>
+          <select id="moveTarget" disabled aria-label="เลือกเอกสารปลายทาง"></select>
+          <button class="button button-quiet" id="moveCurrent" data-i18n="moveCurrent" disabled>ย้ายหน้าที่เลือก</button>
+          <button class="button button-quiet" id="movePageUp" data-i18n="movePageUp" disabled>↑ เรียงก่อน</button>
+          <button class="button button-quiet" id="movePageDown" data-i18n="movePageDown" disabled>↓ เรียงหลัง</button>
+        </div>
+        <div class="ocr-panel">
+          <div class="ocr-title"><strong data-i18n="ocrBlockTitle">ข้อความที่อ่านได้</strong><span id="ocrBadge" data-i18n="ocrNotAnalyzed">ยังไม่วิเคราะห์</span></div>
+          <div class="ocr-toolbar">
+            <button class="button button-quiet" id="downloadCurrentOcr" type="button" disabled data-i18n="downloadCurrentOcr">ดาวน์โหลด OCR หน้านี้ (JSON)</button>
+            <button class="button button-quiet" id="copyCurrentOcr" type="button" disabled data-i18n="copyCurrentOcr">คัดลอกข้อความจัดรูปแบบ</button>
+          </div>
+          <pre id="ocrText" data-i18n="ocrPlaceholder">หลังวิเคราะห์แล้ว ข้อความของหน้าที่เลือกจะแสดงที่นี่</pre>
+        </div>
+      </section>ห
+
+      <section class="panel results-panel hidden" id="results">
+        <div class="section-heading">
+          <div><span class="step">02</span><div><h2 data-i18n="reviewTitle">เอกสารที่ตรวจพบ</h2><p data-i18n="reviewText">ระบบเสนอจุดแบ่งจากหัวเอกสาร เลขที่ วันที่ และหลักฐานต่อเนื่อง ตรวจสอบก่อนดาวน์โหลด</p></div></div>
+          <button class="button button-quiet" id="undo" data-i18n="undo" disabled>↶ ย้อนกลับ</button>
+        </div>
+        <div class="review-alert"><span>!</span><p><strong data-i18n="reviewAlertTitle">ผลวิเคราะห์เป็นข้อเสนอ ไม่รับประกันความถูกต้อง 100%</strong> <span data-i18n="reviewAlertBody">คะแนนเป็นหลักฐานจากกฎ ไม่ใช่ความน่าจะเป็น ทุกหน้าจะยังอยู่ในชุดเพื่อป้องกันหน้าหาย แต่ควรตรวจหน้าที่ขึ้นสถานะ “ไม่แน่ใจ” ก่อนส่งออก</span></p></div>
+        <div id="reviewSummary" class="review-summary"></div>
+        <div id="batchReviewList" class="batch-review-list"></div>
+        <div id="documentList" class="document-list"></div>
+      </section>
+
+      <section class="panel export-panel hidden" id="export">
+        <div class="section-heading">
+          <div><span class="step">03</span><div><h2 data-i18n="exportTitle">ส่งออกเอกสาร</h2><p data-i18n="exportText">สร้างไฟล์จากช่วงหน้าล่าสุดที่คุณตรวจและแก้ไข</p></div></div>
+        </div>
+        <div id="exportSummary" class="export-summary"></div>
+        <div class="toolbar export-toolbar">
+          <button class="button button-primary" id="downloadZip" data-i18n="zipButton">ดาวน์โหลด PDF ทั้งหมดเป็น ZIP</button>
+          <button class="button button-quiet" id="downloadReport" data-i18n="reportButton">ดาวน์โหลดรายงาน JSON</button>
+        </div>
+        <div class="progress-track export-progress hidden" id="exportProgressTrack" role="progressbar" aria-label="ความคืบหน้าการส่งออก" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="exportProgressBar"></div>
+        </div>
+        <div id="exportStatus" class="status-message" role="status" aria-live="polite">ตรวจสอบผลลัพธ์ก่อนส่งออก</div>
+      </section>
+
+      <footer class="content-footer" data-i18n="footer">LOCAL-FIRST PDF REVIEW · ตรวจสอบผลก่อนใช้เป็นเอกสารทางการ</footer>
+    </div>
+  </main>
+  <dialog class="confirm-dialog" id="confirmDialog" aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogMessage">
+    <div class="confirm-dialog-icon" aria-hidden="true">!</div>
+    <h2 id="confirmDialogTitle"></h2>
+    <p id="confirmDialogMessage"></p>
+    <div class="confirm-dialog-actions">
+      <button class="button button-quiet" id="cancelConfirmation" type="button"></button>
+      <button class="button button-danger" id="acceptConfirmation" type="button"></button>
+    </div>
+  </dialog>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "fixture": "synthetic-four-page-invoice-batch",
+  "purpose": "Ground truth for browser smoke tests; all company names and document numbers are fabricated.",
+  "expectedPageCount": 4,
+  "inputPageText": [
+    "DOCUMENT INDEX; INV-SN-2026-001; INV-BO-2026-014; INV-MB-2026-032",
+    "INVOICE; Siam Nova Trading Co., Ltd.; Invoice No. INV-SN-2026-001; Invoice Date 2026-10-01; Total 6206.00 THB",
+    "INVOICE ATTACHMENT; Siam Nova Trading Co., Ltd.; Reference Invoice No.: INV-SN-2026-001",
+    "INVOICE; Blue Orchid Office Supply Co., Ltd.; Invoice No. INV-BO-2026-014; Invoice Date 2026-10-05; Total 2889.00 THB"
+  ],
+  "expectedDocuments": [
+    {
+      "sourcePages": [1],
+      "type": "ไม่แน่ใจ",
+      "note": "Index/cover page; preserve it in output and require manual review."
+    },
+    {
+      "sourcePages": [2, 3],
+      "type": "ใบแจ้งหนี้",
+      "documentNumber": "INV-SN-2026-001"
+    },
+    {
+      "sourcePages": [4],
+      "type": "ใบแจ้งหนี้",
+      "documentNumber": "INV-BO-2026-014"
+    }
+  ],
+  "expectedExportPageCounts": [1, 2, 1],
+  "checks": [
+    "All four source pages are assigned exactly once.",
+    "The attachment on page 3 remains with invoice INV-SN-2026-001.",
+    "The changed invoice number on page 4 begins a new document.",
+    "The actual source-page preview is visible for each detected document."
+  ]
+}
